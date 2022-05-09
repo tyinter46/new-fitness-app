@@ -1,0 +1,53 @@
+version: '3.8'
+
+services:
+  
+  fitness_backend:
+    container_name: fitness_backend
+    image: fitness:1.0.0
+    depends_on:
+      - db
+    build:
+        context: .
+    # volumes:
+    #   - .:/usr/src/app
+    #   - /usr/src/app/node_modules/    
+    ports:
+
+      - '5001:5001'  
+
+    restart: always
+    # command: ["npm", "start"]
+
+    environment:
+      - POSTGRES_USER=root
+      - POSTGRES_PASSWORD=root
+      - POSTGRES_DB=fitnessdb
+      - PGHOST=pg_container
+    links:
+
+         - db  
+
+
+  db:
+       container_name: pg_container
+       image: postgres
+       restart: always
+       environment:
+          POSTGRES_USER: root
+          POSTGRES_PASSWORD: root
+          POSTGRES_DB: fitnessdb
+       ports:
+          - "5432:5432"
+      
+  pgadmin:
+      container_name: pgadmin4_container
+      image: dpage/pgadmin4:5.5
+      restart: always
+      environment:
+        PGADMIN_DEFAULT_EMAIL: admin@admin.com
+        PGADMIN_DEFAULT_PASSWORD: root
+        PGADMIN_LISTEN_PORT: 80
+      ports:
+        - "5050:80"             
+  
