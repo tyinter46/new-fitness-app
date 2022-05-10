@@ -63,6 +63,9 @@ router.delete("/instructors/:id", async (req, res) => {
 
 //update one student
 router.put("/instructors/:id", async (req, res) => {
+  try {
+    
+  
   const { id } = req.params;
   const {
     first_name,
@@ -82,6 +85,9 @@ router.put("/instructors/:id", async (req, res) => {
     date_of_birth,
     id  ] ) 
   res.send(`${id} updated`);
+} catch (error) {
+    res.send(error.message)
+}
 });
 
 module.exports = router;
