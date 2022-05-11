@@ -4,25 +4,27 @@ const helmet = require("helmet")
 const studentController = require('./controllers/studentController')
 const instructorController = require ('./controllers/instructorsController')
 const nutritionistController = require('./controllers/nutritionistController')
-
+const lessonController = require('./controllers/lessonController ')
+const paymentController = require('./payment/payment')
 
 const app = express()
 app.use(helmet());
 app.use(cors());
 app.use(express.json())
 
+//{origin: "http://http://127.0.0.1/:5500"}
 
-
-app.use('/*', (req, res)=>{
-    res.send("404 Not Found")
-})
+app.use('/', paymentController)
 app.use('/',studentController);
 app.use('/',instructorController);
 app.use('/',nutritionistController);
+app.use('/', lessonController)
 app.use('/', async (req, res)=>{
     res.send('welcome to the fitness app')
 })
-
+app.use('/*', (req, res)=>{
+    res.send("404 Not Found")
+})
 
 
 const port = process.env.PORT || 5000
