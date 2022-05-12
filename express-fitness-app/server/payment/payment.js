@@ -2,25 +2,29 @@ require("dotenv").config()
 
 const express = require("express");
 const router = express.Router();
-const axios = require('axios')
+const axios = require('axios');
+const { json } = require("express");
 
 
 const stripe = require('stripe')(process.env.STRIPE_PRIVATE_KEY)
 
 
-  const lessons = async () => {
-    return axios.get('http://localhost:5000/lessons').then(res=> res).then(data=> JSON.stringify(data.data))
-  }
-  // console.log(response.data)
  
+  // console.log(response.data)
+ //fetch all the classes from the database and save it to a variable 
+  const allClasses = (async() => {
+    const lessons = async () => {
+          
+       try {
+      classes =  axios.get('http://localhost:5000/lessons').then(res=> res).then(data=> {return data.data})
+       } catch (error) {
+         console.log(error.message)
+       }
+       return classes
+    }
+  let allLessons = await lessons()
+  // console.log(allLessons)
 
-
-// const allLessons = lessons().then(data=> {
-//   // console.log(data)
-//   const firstLesson = data
-// return firstLesson
-// })
-// console.log(allLessons)
 router.post("/payments", async (req,res)=>{
   try {
     const session = await stripe.checkout.sessions.create({
@@ -33,12 +37,13 @@ router.post("/payments", async (req,res)=>{
         price_data: {
             currency: 'mxn',
             product_data: {
-              name: "bench"
+              name: allLessons[0].name
             },
-            unit_amount: 17500,
+            unit_amount: allLessons[0].price,
            },
         quantity: 1
       }
+     
     ],
     success_url: `${process.env.CLIENT_URL}/success.html`,
     cancel_url: `${process.env.CLIENT_URL}/cancel.html`,
@@ -51,4 +56,5 @@ router.post("/payments", async (req,res)=>{
   }
 })
 
+})();
 module.exports = router 
